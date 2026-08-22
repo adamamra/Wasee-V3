@@ -61,27 +61,16 @@ class ParcelController extends Controller
 
     public function show(Request $request, $serialNumber = null)
     {
-        // If serial number is in the request (from search form), redirect to the show route
         if ($request->has('serial_number')) {
             return redirect()->route('parcels.show', $request->serial_number);
         }
 
-        // If no serial number is provided, show the search form
         if (!$serialNumber) {
-            return $this->deliverForm();
+            return redirect()->route('parcels.my')
+                ->with('error', 'يرجى إدخال رقم تسلسلي صحيح');
         }
 
         $parcel = Parcel::where('serial_number', $serialNumber)->firstOrFail();
         return view('parcels.show', compact('parcel'));
-    }
-
-    public function deliverForm()
-    {
-        abort(403);
-    }
-
-    public function deliver(Request $request, $serialNumber)
-    {
-        abort(403);
     }
 }

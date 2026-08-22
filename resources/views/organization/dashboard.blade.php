@@ -3,641 +3,179 @@
 @section('title', 'لوحة تحكم المؤسسة')
 
 @section('content')
-<style>
-    .dashboard-header {
-        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #8b5cf6 100%);
-        color: white;
-        padding: 40px;
-        border-radius: 20px;
-        margin-bottom: 40px;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .dashboard-header::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -10%;
-        width: 300px;
-        height: 300px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
-    }
-
-    .dashboard-header::after {
-        content: '';
-        position: absolute;
-        bottom: -30%;
-        left: -5%;
-        width: 200px;
-        height: 200px;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 50%;
-    }
-
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 24px;
-        margin-bottom: 40px;
-    }
-
-    .stat-card {
-        background: white;
-        border-radius: 16px;
-        padding: 24px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .stat-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #6366f1, #8b5cf6);
-    }
-
-    .stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    }
-
-    .stat-icon {
-        width: 56px;
-        height: 56px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        margin-bottom: 16px;
-    }
-
-    .stat-icon.total {
-        background: linear-gradient(135deg, #6366f1, #4f46e5);
-        color: white;
-    }
-
-    .stat-icon.pending {
-        background: linear-gradient(135deg, #f59e0b, #d97706);
-        color: white;
-    }
-
-    .stat-icon.delivered {
-        background: linear-gradient(135deg, #10b981, #059669);
-        color: white;
-    }
-
-    .stat-value {
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: #1e293b;
-        margin-bottom: 8px;
-    }
-
-    .stat-label {
-        font-size: 1rem;
-        color: #64748b;
-        font-weight: 500;
-    }
-
-    .search-card {
-        background: white;
-        border-radius: 20px;
-        padding: 32px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        margin-bottom: 32px;
-    }
-
-    .search-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 24px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .search-input {
-        width: 100%;
-        padding: 16px 20px;
-        border: 2px solid #e5e7eb;
-        border-radius: 12px;
-        font-size: 1.1rem;
-        transition: all 0.3s ease;
-        outline: none;
-        background: #f9fafb;
-    }
-
-    .search-input:focus {
-        border-color: #6366f1;
-        background: white;
-        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-    }
-
-    .search-btn {
-        background: linear-gradient(135deg, #6366f1, #4f46e5);
-        color: white;
-        border: none;
-        padding: 16px 24px;
-        border-radius: 12px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .search-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
-    }
-
-    .parcel-card {
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        overflow: hidden;
-    }
-
-    .parcel-header {
-        background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-        padding: 24px 32px;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .parcel-title {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: #1e293b;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .parcel-body {
-        padding: 32px;
-    }
-
-    .status-badge {
-        padding: 6px 12px;
-        border-radius: 8px;
-        font-size: 0.875rem;
-        font-weight: 600;
-    }
-
-    .status-badge.pending {
-        background: linear-gradient(135deg, #fef3c7, #fde68a);
-        color: #92400e;
-    }
-
-    .status-badge.delivered {
-        background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-        color: #065f46;
-    }
-
-    .progress-bar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin: 24px 0;
-        position: relative;
-    }
-
-    .progress-bar::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: #e5e7eb;
-        z-index: 1;
-    }
-
-    .progress-step {
-        position: relative;
-        z-index: 2;
-        text-align: center;
-    }
-
-    .progress-dot {
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        margin: 0 auto 8px;
-        transition: all 0.3s ease;
-    }
-
-    .progress-dot.active {
-        background: linear-gradient(135deg, #6366f1, #4f46e5);
-        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
-    }
-
-    .progress-dot.inactive {
-        background: #e5e7eb;
-        border: 2px solid #f9fafb;
-    }
-
-    .progress-text {
-        font-size: 0.875rem;
-        color: #64748b;
-        font-weight: 500;
-    }
-
-    .info-section {
-        margin-bottom: 32px;
-    }
-
-    .info-title {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 16px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .info-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 0;
-        border-bottom: 1px solid #f1f5f9;
-    }
-
-    .info-row:last-child {
-        border-bottom: none;
-    }
-
-    .info-label {
-        font-weight: 600;
-        color: #374151;
-        min-width: 140px;
-    }
-
-    .info-value {
-        color: #1e293b;
-        text-align: left;
-        flex: 1;
-    }
-
-    .delivery-form {
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(99, 102, 241, 0.02));
-        border: 1px solid rgba(99, 102, 241, 0.1);
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 16px;
-    }
-
-    .delivery-input {
-        padding: 12px 16px;
-        border: 2px solid #e5e7eb;
-        border-radius: 8px;
-        font-size: 0.95rem;
-        transition: all 0.3s ease;
-        outline: none;
-        background: white;
-    }
-
-    .delivery-input:focus {
-        border-color: #6366f1;
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-    }
-
-    .action-buttons {
-        display: flex;
-        gap: 16px;
-        align-items: center;
-        justify-content: space-between;
-        padding: 24px 32px;
-        background: #f8fafc;
-        border-top: 1px solid #e5e7eb;
-    }
-
-    .back-btn {
-        background: transparent;
-        color: #6b7280;
-        border: 2px solid #e5e7eb;
-        padding: 12px 24px;
-        border-radius: 8px;
-        font-weight: 600;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.3s ease;
-    }
-
-    .back-btn:hover {
-        background: #f9fafb;
-        border-color: #d1d5db;
-        color: #4b5563;
-        transform: translateY(-2px);
-    }
-
-    .confirm-btn {
-        background: linear-gradient(135deg, #10b981, #059669);
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .confirm-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
-    }
-
-    @media (max-width: 768px) {
-        .stats-grid {
-            grid-template-columns: 1fr;
-            gap: 16px;
-        }
-
-        .dashboard-header {
-            padding: 24px;
-        }
-
-        .search-card {
-            padding: 20px;
-        }
-
-        .parcel-body {
-            padding: 20px;
-        }
-
-        .action-buttons {
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .delivery-form {
-            padding: 16px;
-        }
-    }
-</style>
-
-<!-- Dashboard Header -->
-<div class="dashboard-header">
-    <h1 class="text-3xl font-bold mb-2">
-        <i class="fas fa-tachometer-alt ml-3"></i>
-        لوحة تحكم المؤسسة
-    </h1>
-    <p class="text-lg opacity-90">مرحباً بك في لوحة تحكم المؤسسة</p>
+{{-- Header --}}
+<div class="bg-gradient-to-br from-primary-500 to-primary-700 rounded-3xl p-8 lg:p-10 mb-8 text-white relative overflow-hidden">
+    <div class="absolute -top-32 -right-32 w-80 h-80 bg-white/10 rounded-full"></div>
+    <div class="absolute -bottom-20 -left-20 w-60 h-60 bg-white/5 rounded-full"></div>
+    <div class="relative z-10">
+        <h1 class="text-3xl lg:text-4xl font-black flex items-center gap-3 mb-2"><i class="fas fa-tachometer-alt text-amber-300"></i> لوحة تحكم المؤسسة</h1>
+        <p class="text-white/80 font-medium text-lg">مرحباً بك في لوحة تحكم المؤسسة</p>
+    </div>
 </div>
 
-<!-- Statistics Cards -->
+{{-- Stats --}}
 @if(isset($stats))
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon total">
-                <i class="fas fa-chart-line"></i>
-            </div>
-            <div class="stat-value">{{ number_format($stats['total']) }}</div>
-            <div class="stat-label">إجمالي الطلبات</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-l from-primary-500 to-primary-700"></div>
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 text-white flex items-center justify-center text-xl shadow-lg shadow-primary-500/20 mb-4">
+            <i class="fas fa-chart-line"></i>
         </div>
-
-        <div class="stat-card">
-            <div class="stat-icon pending">
-                <i class="fas fa-clock"></i>
-            </div>
-            <div class="stat-value">{{ number_format($stats['pending']) }}</div>
-            <div class="stat-label">قيد الانتظار</div>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-icon delivered">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="stat-value">{{ number_format($stats['delivered']) }}</div>
-            <div class="stat-label">تم التسليم</div>
-        </div>
+        <div class="text-3xl font-black text-gray-800 mb-1">{{ number_format($stats['total']) }}</div>
+        <div class="text-sm text-gray-500 font-medium">إجمالي الطلبات</div>
     </div>
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-l from-amber-500 to-amber-600"></div>
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 text-white flex items-center justify-center text-xl shadow-lg shadow-amber-500/20 mb-4">
+            <i class="fas fa-clock"></i>
+        </div>
+        <div class="text-3xl font-black text-gray-800 mb-1">{{ number_format($stats['pending']) }}</div>
+        <div class="text-sm text-gray-500 font-medium">قيد الانتظار</div>
+    </div>
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-l from-secondary-500 to-secondary-600"></div>
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-secondary-500 to-secondary-600 text-white flex items-center justify-center text-xl shadow-lg shadow-secondary-500/20 mb-4">
+            <i class="fas fa-circle-check"></i>
+        </div>
+        <div class="text-3xl font-black text-gray-800 mb-1">{{ number_format($stats['delivered']) }}</div>
+        <div class="text-sm text-gray-500 font-medium">تم التسليم</div>
+    </div>
+</div>
 @endif
 
-<!-- Search Section -->
-<div class="search-card">
-    <h2 class="search-title">
-        <i class="fas fa-search"></i>
-        بحث عن طلب وصاية
+{{-- Search --}}
+<div class="bg-white rounded-2xl border border-gray-100 p-5 sm:p-7 mb-8 shadow-sm">
+    <h2 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <i class="fas fa-search text-primary-500"></i> بحث عن طلب وصاية
     </h2>
-    
-    <form method="GET" action="{{ route('organization.parcels.search') }}">
-        @csrf
-        <div class="flex gap-3">
-            <input type="text" 
-                   name="serial_number" 
-                   class="search-input" 
-                   placeholder="أدخل رقم السيريال للبحث"
-                   value="{{ request('serial_number', '') }}"
-                   required>
-            <button type="submit" class="search-btn">
-                <i class="fas fa-search"></i>
-                بحث
-            </button>
+    <form method="GET" action="{{ route('organization.parcels.search') }}" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <div class="flex-1 relative">
+            <i class="fas fa-search absolute right-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input type="text" name="serial_number" value="{{ request('serial_number', '') }}" required placeholder="ابحث برقم السيريال..." class="w-full pr-14 py-4 px-5 bg-gradient-to-l from-primary-50/80 to-white border-2 border-primary-200 rounded-2xl text-base text-gray-800 placeholder-gray-400 font-medium focus:border-primary-500 focus:ring-4 focus:ring-primary-100 focus:bg-white outline-none transition-all duration-200">
         </div>
-        @error('serial_number')
-            <div class="mt-2 text-red-600 text-sm font-medium">
-                <i class="fas fa-exclamation-circle ml-1"></i>
-                {{ $message }}
-            </div>
-        @enderror
+        <button type="submit" class="btn-primary shrink-0 py-4 px-8 text-base"><i class="fas fa-search"></i> بحث</button>
     </form>
+    @error('serial_number')
+        <p class="text-red-500 text-sm font-medium mt-3"><i class="fas fa-exclamation-circle ml-1"></i>{{ $message }}</p>
+    @enderror
 </div>
 
-<!-- Parcel Details -->
+{{-- Parcel Result --}}
 @if(isset($parcel) && $searched)
-    <div class="parcel-card">
-        <div class="parcel-header">
-            <h3 class="parcel-title">
-                <i class="fas fa-box-open"></i>
-                تفاصيل طلب الوصاية
-            </h3>
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    {{-- Header --}}
+    <div class="bg-gradient-to-l from-gray-50 to-white p-6 lg:p-8 border-b border-gray-100">
+        <div class="flex items-center justify-between">
+            <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2"><i class="fas fa-box-open text-primary-500"></i> تفاصيل طلب الوصاية</h3>
+            <span class="px-4 py-1.5 rounded-xl text-sm font-bold {{ $parcel->status == 'delivered' ? 'bg-secondary-50 text-secondary-700' : 'bg-amber-50 text-amber-700' }}">
+                {{ $parcel->status == 'delivered' ? 'تم التسليم' : 'قيد الانتظار' }}
+            </span>
+        </div>
+    </div>
+
+    {{-- Body --}}
+    <div class="p-6 lg:p-8">
+        {{-- Progress --}}
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <span class="font-bold text-gray-700">حالة الطلب الحالية</span>
+                <span class="px-3 py-1 rounded-lg text-sm font-bold {{ $parcel->status == 'delivered' ? 'bg-secondary-50 text-secondary-700' : 'bg-amber-50 text-amber-700' }}">
+                    {{ $parcel->status == 'delivered' ? 'تم التسليم' : 'قيد الانتظار' }}
+                </span>
+            </div>
+            <div class="flex items-center justify-between max-w-sm mx-auto relative">
+                <div class="text-center flex-1">
+                    <div class="w-6 h-6 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 mx-auto mb-2 shadow-md shadow-primary-500/30"></div>
+                    <div class="text-xs font-bold text-gray-600">تم إنشاء الطلب</div>
+                </div>
+                <div class="h-0.5 flex-1 bg-gray-200 max-w-[100px] relative">
+                    <div class="absolute inset-0 bg-gradient-to-l from-secondary-500 to-gray-200 rounded-full transition-all duration-500 {{ $parcel->status == 'delivered' ? 'w-full' : 'w-0' }}"></div>
+                </div>
+                <div class="text-center flex-1">
+                    <div class="w-6 h-6 rounded-full mx-auto mb-2 transition-all duration-500 shadow-md {{ $parcel->status == 'delivered' ? 'bg-gradient-to-br from-secondary-500 to-secondary-600 shadow-secondary-500/30' : 'bg-gray-300' }}"></div>
+                    <div class="text-xs font-bold text-gray-600">تم التسليم</div>
+                </div>
+            </div>
         </div>
 
-        <div class="parcel-body">
-            <!-- Status Section -->
-            <div class="mb-6">
-                <div class="flex justify-between items-center mb-4">
-                    <span class="font-bold text-lg">حالة الطلب الحالية</span>
-                    <span class="status-badge {{ $parcel->status == 'delivered' ? 'delivered' : 'pending' }}">
-                        {{ $parcel->status == 'delivered' ? 'تم التسليم' : 'قيد الانتظار' }}
-                    </span>
-                </div>
-
-                <div class="progress-bar">
-                    <div class="progress-step">
-                        <div class="progress-dot active"></div>
-                        <div class="progress-text">تم إنشاء الطلب</div>
-                    </div>
-                    <div class="progress-step">
-                        <div class="progress-dot {{ $parcel->status == 'delivered' ? 'active' : 'inactive' }}"></div>
-                        <div class="progress-text">تم التسليم</div>
-                    </div>
+        {{-- Info Sections --}}
+        <div class="space-y-6">
+            {{-- Basic Info --}}
+            <div>
+                <h4 class="font-bold text-gray-700 mb-3 flex items-center gap-2"><i class="fas fa-circle-info text-primary-400"></i> معلومات أساسية</h4>
+                <div class="bg-gray-50 rounded-xl divide-y divide-gray-100">
+                    <div class="flex justify-between items-center px-4 py-3"><span class="text-sm text-gray-500">رقم السيريال</span><span class="text-sm font-bold text-gray-800">{{ $parcel->serial_number }}</span></div>
+                    <div class="flex justify-between items-center px-4 py-3"><span class="text-sm text-gray-500">تاريخ الإنشاء</span><span class="text-sm font-bold text-gray-800">{{ $parcel->created_at->format('Y-m-d') }}</span></div>
                 </div>
             </div>
 
-            <!-- Basic Info -->
-            <div class="info-section">
-                <div class="info-row">
-                    <span class="info-label">رقم السيريال:</span>
-                    <span class="info-value">{{ $parcel->serial_number }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">حالة الطلب:</span>
-                    <span class="info-value">
-                        <span class="status-badge {{ $parcel->status == 'delivered' ? 'delivered' : 'pending' }}">
-                            {{ $parcel->status == 'delivered' ? 'تم التسليم' : 'قيد الانتظار' }}
-                        </span>
-                    </span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">تاريخ الإنشاء:</span>
-                    <span class="info-value">{{ $parcel->created_at->format('Y-m-d') }}</span>
+            {{-- Agent Info --}}
+            <div>
+                <h4 class="font-bold text-gray-700 mb-3 flex items-center gap-2"><i class="fas fa-user-shield text-primary-400"></i> معلومات الوصي</h4>
+                <div class="bg-gray-50 rounded-xl divide-y divide-gray-100">
+                    <div class="flex justify-between items-center px-4 py-3"><span class="text-sm text-gray-500">الاسم</span><span class="text-sm font-bold text-gray-800">{{ $parcel->agent_name ?? 'غير محدد' }}</span></div>
+                    <div class="flex justify-between items-center px-4 py-3"><span class="text-sm text-gray-500">الجوال</span><span class="text-sm font-bold text-gray-800">{{ $parcel->agent_phone ?? 'غير محدد' }}</span></div>
+                    <div class="flex justify-between items-center px-4 py-3"><span class="text-sm text-gray-500">رقم الهوية</span><span class="text-sm font-bold text-gray-800">{{ $parcel->agent_id_number ?? 'غير محدد' }}</span></div>
+                    <div class="flex justify-between items-center px-4 py-3"><span class="text-sm text-gray-500">الفرع</span><span class="text-sm font-bold text-gray-800">{{ $parcel->branch_name ?? 'غير محدد' }}</span></div>
                 </div>
             </div>
 
-            <!-- Agent Info -->
-            <div class="info-section">
-                <h4 class="info-title">
-                    <i class="fas fa-user-shield"></i>
-                    معلومات الوصي
-                </h4>
-                <div class="info-row">
-                    <span class="info-label">اسم الوصي:</span>
-                    <span class="info-value">{{ $parcel->agent_name ?? 'غير محدد' }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">رقم الجوال:</span>
-                    <span class="info-value">{{ $parcel->agent_phone ?? 'غير محدد' }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">رقم الهوية:</span>
-                    <span class="info-value">{{ $parcel->agent_id_number ?? 'غير محدد' }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">اسم المؤسسة / الفرع:</span>
-                    <span class="info-value">{{ $parcel->branch_name ?? 'غير محدد' }}</span>
+            {{-- Sender Info --}}
+            <div>
+                <h4 class="font-bold text-gray-700 mb-3 flex items-center gap-2"><i class="fas fa-paper-plane text-primary-400"></i> معلومات المرسل</h4>
+                <div class="bg-gray-50 rounded-xl divide-y divide-gray-100">
+                    <div class="flex justify-between items-center px-4 py-3"><span class="text-sm text-gray-500">الاسم</span><span class="text-sm font-bold text-gray-800">{{ $parcel->sender_name ?? 'غير محدد' }}</span></div>
+                    <div class="flex justify-between items-center px-4 py-3"><span class="text-sm text-gray-500">الهاتف</span><span class="text-sm font-bold text-gray-800">{{ $parcel->sender_phone ?? 'غير محدد' }}</span></div>
+                    <div class="flex justify-between items-center px-4 py-3"><span class="text-sm text-gray-500">رقم الهوية</span><span class="text-sm font-bold text-gray-800">{{ $parcel->sender_id_number ?? 'غير محدد' }}</span></div>
+                    <div class="flex justify-between items-center px-4 py-3"><span class="text-sm text-gray-500">العنوان</span><span class="text-sm font-bold text-gray-800">{{ $parcel->sender_address ?? 'غير محدد' }}</span></div>
                 </div>
             </div>
 
-            <!-- Sender Info -->
-            <div class="info-section">
-                <h4 class="info-title">
-                    <i class="fas fa-user"></i>
-                    معلومات مرسل طلب الوصاية
-                </h4>
-                <div class="info-row">
-                    <span class="info-label">الاسم:</span>
-                    <span class="info-value">{{ $parcel->sender_name ?? 'غير محدد' }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">رقم الهاتف:</span>
-                    <span class="info-value">{{ $parcel->sender_phone ?? 'غير محدد' }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">رقم الهوية:</span>
-                    <span class="info-value">{{ $parcel->sender_id_number ?? 'غير محدد' }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">العنوان:</span>
-                    <span class="info-value">{{ $parcel->sender_address ?? 'غير محدد' }}</span>
+            {{-- Receiver Info --}}
+            <div>
+                <h4 class="font-bold text-gray-700 mb-3 flex items-center gap-2"><i class="fas fa-user text-primary-400"></i> معلومات المستلم</h4>
+                <div class="bg-gray-50 rounded-xl divide-y divide-gray-100">
+                    <div class="flex justify-between items-center px-4 py-3"><span class="text-sm text-gray-500">الاسم</span><span class="text-sm font-bold text-gray-800">{{ $parcel->receiver_name ?? 'غير محدد' }}</span></div>
+                    <div class="flex justify-between items-center px-4 py-3"><span class="text-sm text-gray-500">الهاتف</span><span class="text-sm font-bold text-gray-800">{{ $parcel->receiver_phone ?? 'غير محدد' }}</span></div>
+                    <div class="flex justify-between items-center px-4 py-3"><span class="text-sm text-gray-500">رقم الهوية</span><span class="text-sm font-bold text-gray-800">{{ $parcel->receiver_id_number ?? 'غير محدد' }}</span></div>
+                    <div class="flex justify-between items-center px-4 py-3"><span class="text-sm text-gray-500">العنوان</span><span class="text-sm font-bold text-gray-800">{{ $parcel->receiver_address ?? 'غير محدد' }}</span></div>
                 </div>
             </div>
 
-            <!-- Receiver Info -->
-            <div class="info-section">
-                <h4 class="info-title">
-                    <i class="fas fa-user"></i>
-                    معلومات المستلم
-                </h4>
-                <div class="info-row">
-                    <span class="info-label">الاسم:</span>
-                    <span class="info-value">{{ $parcel->receiver_name ?? 'غير محدد' }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">رقم الهاتف:</span>
-                    <span class="info-value">{{ $parcel->receiver_phone ?? 'غير محدد' }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">رقم الهوية:</span>
-                    <span class="info-value">{{ $parcel->receiver_id_number ?? 'غير محدد' }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">العنوان:</span>
-                    <span class="info-value">{{ $parcel->receiver_address ?? 'غير محدد' }}</span>
-                </div>
-            </div>
-
-            <!-- Notes -->
+            {{-- Notes --}}
             @if($parcel->notes)
-                <div class="info-section">
-                    <h4 class="info-title">
-                        <i class="fas fa-sticky-note"></i>
-                        ملاحظات إضافية
-                    </h4>
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <p class="text-gray-700">{{ $parcel->notes }}</p>
-                    </div>
-                </div>
+            <div>
+                <h4 class="font-bold text-gray-700 mb-3 flex items-center gap-2"><i class="fas fa-note-sticky text-primary-400"></i> ملاحظات</h4>
+                <div class="bg-gray-50 rounded-xl p-4"><p class="text-sm text-gray-700">{{ $parcel->notes }}</p></div>
+            </div>
             @endif
         </div>
 
+        {{-- Delivery Form or Back Button --}}
         @if($parcel->status != \App\Models\Parcel::STATUS_DELIVERED)
-            <div class="action-buttons">
-                <a href="{{ route('organization.dashboard') }}" class="back-btn">
-                    <i class="fas fa-arrow-right"></i>
-                    رجوع
-                </a>
-
-                <form action="{{ route('organization.parcels.update-status', $parcel) }}" method="POST">
-                    @csrf
-                    @method('PATCH')
-
-                    <div class="delivery-form">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                            <input type="text" name="receiver_name" class="delivery-input" placeholder="اسم المستلم" value="{{ old('receiver_name', $parcel->receiver_name) }}">
-                            <input type="text" name="receiver_phone" class="delivery-input" placeholder="جوال المستلم" value="{{ old('receiver_phone', $parcel->receiver_phone) }}">
-                            <input type="text" name="receiver_id_number" class="delivery-input" placeholder="هوية المستلم" value="{{ old('receiver_id_number', $parcel->receiver_id_number) }}">
-                            <input type="text" name="receiver_address" class="delivery-input" placeholder="عنوان المستلم" value="{{ old('receiver_address', $parcel->receiver_address) }}">
-                        </div>
-
-                        <input type="hidden" name="status" value="{{ \App\Models\Parcel::STATUS_DELIVERED }}">
-                        <button type="submit" class="confirm-btn">
-                            <i class="fas fa-check"></i>
-                            تأكيد التسليم
-                        </button>
-                    </div>
-                </form>
-            </div>
+        <div class="mt-8 bg-gradient-to-br from-primary-50/50 to-white border border-primary-100 rounded-2xl p-6">
+            <h4 class="font-bold text-gray-700 mb-4 flex items-center gap-2 text-base"><i class="fas fa-check-circle text-secondary-500"></i> تأكيد التسليم</h4>
+            <form action="{{ route('organization.parcels.update-status', $parcel) }}" method="POST">
+                @csrf @method('PATCH')
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+                    <input type="text" name="receiver_name" placeholder="اسم المستلم" value="{{ old('receiver_name', $parcel->receiver_name) }}" class="input-custom text-sm">
+                    <input type="text" name="receiver_phone" placeholder="جوال المستلم" value="{{ old('receiver_phone', $parcel->receiver_phone) }}" class="input-custom text-sm">
+                    <input type="text" name="receiver_id_number" placeholder="هوية المستلم" value="{{ old('receiver_id_number', $parcel->receiver_id_number) }}" class="input-custom text-sm">
+                    <input type="text" name="receiver_address" placeholder="عنوان المستلم" value="{{ old('receiver_address', $parcel->receiver_address) }}" class="input-custom text-sm">
+                </div>
+                <input type="hidden" name="status" value="{{ \App\Models\Parcel::STATUS_DELIVERED }}">
+                <div class="flex flex-wrap gap-3">
+                    <a href="{{ route('organization.dashboard') }}" class="btn-secondary text-sm px-5 py-2.5"><i class="fas fa-arrow-right ml-1"></i> رجوع</a>
+                    <button type="submit" class="btn bg-gradient-to-l from-secondary-500 to-secondary-600 text-white font-bold rounded-2xl px-6 py-2.5 text-sm hover:shadow-xl hover:shadow-secondary-500/30 transition-all duration-200 active:scale-95"><i class="fas fa-check ml-1"></i> تأكيد التسليم</button>
+                </div>
+            </form>
+        </div>
         @else
-            <div class="action-buttons">
-                <a href="{{ route('organization.dashboard') }}" class="back-btn">
-                    <i class="fas fa-arrow-right"></i>
-                    رجوع
-                </a>
-            </div>
+        <div class="mt-6">
+            <a href="{{ route('organization.dashboard') }}" class="btn-secondary text-sm px-5 py-2.5"><i class="fas fa-arrow-right ml-1"></i> رجوع</a>
+        </div>
         @endif
     </div>
+</div>
 @endif
 @endsection

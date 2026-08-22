@@ -8,7 +8,6 @@ use Illuminate\Support\Str;
 class Parcel extends Model
 {
     const STATUS_PENDING = 'pending';
-    const STATUS_IN_PROGRESS = 'in_progress';
     const STATUS_DELIVERED = 'delivered';
     
     /**

@@ -47,11 +47,6 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function getIdNumberAttribute($value)
-    {
-        return $value;
-    }
-
     public function getAuthIdentifierName()
     {
         return 'id_number';
@@ -64,22 +59,6 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        $isAdminFlag = $this->getAttribute('is_admin');
-        if ($isAdminFlag !== null) {
-            if ((bool) $isAdminFlag === true) {
-                return true;
-            }
-        }
-
-        $role = $this->getAttribute('role');
-        if ($role !== null) {
-            return (string) $role === 'admin';
-        }
-
-        if ((string) $this->getAttribute('email') === 'admin@example.com') {
-            return true;
-        }
-
-        return false;
+        return (bool) ($this->is_admin ?? false);
     }
 }

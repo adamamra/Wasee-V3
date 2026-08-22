@@ -1,10 +1,8 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'وصيّ - الرئيسية'); ?>
 
-@section('title', 'وصيّ - الرئيسية')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="container mx-auto px-4 lg:px-6 py-8 lg:py-12">
-    {{-- Hero Section --}}
+    
     <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary-500 via-primary-600 to-primary-800 text-white p-8 lg:p-16 mb-12 shadow-2xl shadow-primary-500/25">
         <div class="absolute -top-40 -right-40 w-80 h-80 bg-white/5 rounded-full blur-3xl"></div>
         <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-secondary-400/10 rounded-full blur-3xl"></div>
@@ -14,42 +12,42 @@
                 نظام إدارة الوصاية الإلكتروني
             </div>
             <h1 class="text-4xl lg:text-5xl xl:text-6xl font-black mb-4 tracking-tight">
-                @auth
+                <?php if(auth()->guard()->check()): ?>
                 مرحباً بك في <span class="text-secondary-300">وصيّ</span>
-                @else
+                <?php else: ?>
                 نظام <span class="text-secondary-300">وصيّ</span> لإدارة الوصاية
-                @endauth
+                <?php endif; ?>
             </h1>
             <p class="text-lg lg:text-xl text-white/80 max-w-2xl mx-auto mb-8 font-medium">
-                @auth
+                <?php if(auth()->guard()->check()): ?>
                 إدارة طلبات الوصاية الخاصة بك بكل سهولة واحترافية
-                @else
+                <?php else: ?>
                 نظام متكامل لإدارة طلبات الوصاية الإلكترونية بكل أمان وسهولة
-                @endauth
+                <?php endif; ?>
             </p>
-            @guest
+            <?php if(auth()->guard()->guest()): ?>
             <div class="flex flex-wrap justify-center gap-3">
-                <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-primary-600 font-bold rounded-2xl hover:bg-secondary-50 active:scale-95 transition-all duration-200 shadow-xl shadow-black/10">
+                <a href="<?php echo e(route('register')); ?>" class="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-primary-600 font-bold rounded-2xl hover:bg-secondary-50 active:scale-95 transition-all duration-200 shadow-xl shadow-black/10">
                     <i class="fas fa-user-plus"></i> إنشاء حساب جديد
                 </a>
-                <a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-white/15 hover:bg-white/25 text-white font-bold rounded-2xl backdrop-blur-sm border border-white/20 active:scale-95 transition-all duration-200">
+                <a href="<?php echo e(route('login')); ?>" class="inline-flex items-center gap-2 px-8 py-3.5 bg-white/15 hover:bg-white/25 text-white font-bold rounded-2xl backdrop-blur-sm border border-white/20 active:scale-95 transition-all duration-200">
                     <i class="fas fa-right-to-bracket"></i> تسجيل الدخول
                 </a>
             </div>
-            @endguest
-            @auth
+            <?php endif; ?>
+            <?php if(auth()->guard()->check()): ?>
             <div class="flex flex-wrap justify-center gap-3">
-                <a href="{{ route('parcels.create') }}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-secondary-500 text-white font-bold rounded-2xl hover:bg-secondary-600 active:scale-95 transition-all duration-200 shadow-xl shadow-black/10">
+                <a href="<?php echo e(route('parcels.create')); ?>" class="inline-flex items-center gap-2 px-8 py-3.5 bg-secondary-500 text-white font-bold rounded-2xl hover:bg-secondary-600 active:scale-95 transition-all duration-200 shadow-xl shadow-black/10">
                     <i class="fas fa-circle-plus"></i> طلب وصاية جديد
                 </a>
-                <a href="{{ route('parcels.my') }}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-white/15 hover:bg-white/25 text-white font-bold rounded-2xl backdrop-blur-sm border border-white/20 active:scale-95 transition-all duration-200">
+                <a href="<?php echo e(route('parcels.my')); ?>" class="inline-flex items-center gap-2 px-8 py-3.5 bg-white/15 hover:bg-white/25 text-white font-bold rounded-2xl backdrop-blur-sm border border-white/20 active:scale-95 transition-all duration-200">
                     <i class="fas fa-list"></i> طلباتي
                 </a>
             </div>
-            @endauth
+            <?php endif; ?>
         </div>
-        {{-- Quick start guide inside hero for guests --}}
-        @guest
+        
+        <?php if(auth()->guard()->guest()): ?>
         <div class="relative z-10 mt-8 max-w-3xl mx-auto bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/10">
             <div class="flex items-center gap-2 justify-center mb-4 text-white/90 text-sm font-bold"><i class="fas fa-list-ol"></i> خطوات البدء السريع</div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -67,31 +65,31 @@
                 </div>
             </div>
         </div>
-        @endguest
+        <?php endif; ?>
     </div>
 
-    {{-- Stats for logged in users --}}
-    @auth
+    
+    <?php if(auth()->guard()->check()): ?>
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
             <div class="w-12 h-12 rounded-xl bg-primary-50 text-primary-500 flex items-center justify-center text-xl mx-auto mb-3 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"><i class="fas fa-file-contract"></i></div>
-            <div class="text-3xl font-black text-gray-800 bg-gradient-to-br from-primary-500 to-primary-700 bg-clip-text text-transparent">{{ auth()->user()->parcels()->count() }}</div>
+            <div class="text-3xl font-black text-gray-800 bg-gradient-to-br from-primary-500 to-primary-700 bg-clip-text text-transparent"><?php echo e(auth()->user()->parcels()->count()); ?></div>
             <div class="text-sm font-medium text-gray-500">إجمالي الطلبات</div>
         </div>
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
             <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-xl mx-auto mb-3 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"><i class="fas fa-spinner"></i></div>
-            <div class="text-3xl font-black text-gray-800 bg-gradient-to-br from-amber-500 to-amber-700 bg-clip-text text-transparent">{{ auth()->user()->parcels()->where('status', '!=', 'delivered')->count() }}</div>
+            <div class="text-3xl font-black text-gray-800 bg-gradient-to-br from-amber-500 to-amber-700 bg-clip-text text-transparent"><?php echo e(auth()->user()->parcels()->where('status', '!=', 'delivered')->count()); ?></div>
             <div class="text-sm font-medium text-gray-500">الطلبات النشطة</div>
         </div>
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
             <div class="w-12 h-12 rounded-xl bg-secondary-50 text-secondary-500 flex items-center justify-center text-xl mx-auto mb-3 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"><i class="fas fa-circle-check"></i></div>
-            <div class="text-3xl font-black text-gray-800 bg-gradient-to-br from-secondary-500 to-secondary-700 bg-clip-text text-transparent">{{ auth()->user()->parcels()->where('status', 'delivered')->count() }}</div>
+            <div class="text-3xl font-black text-gray-800 bg-gradient-to-br from-secondary-500 to-secondary-700 bg-clip-text text-transparent"><?php echo e(auth()->user()->parcels()->where('status', 'delivered')->count()); ?></div>
             <div class="text-sm font-medium text-gray-500">المكتملة</div>
         </div>
     </div>
-    @endauth
+    <?php endif; ?>
 
-    {{-- Features --}}
+    
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 text-center hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group">
             <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100 text-primary-500 flex items-center justify-center text-3xl mx-auto mb-5 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg shadow-primary-500/5"><i class="fas fa-file-signature"></i></div>
@@ -110,7 +108,7 @@
         </div>
     </div>
 
-    {{-- Steps / Video section --}}
+    
     <div class="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-8 lg:p-12 border border-gray-100 shadow-sm">
         <div class="max-w-2xl mx-auto">
             <div class="flex items-center gap-3 mb-8">
@@ -144,4 +142,5 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\victus\Desktop\projects\wa3ee\resources\views/home.blade.php ENDPATH**/ ?>

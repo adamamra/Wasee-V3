@@ -1,163 +1,86 @@
 @extends('admin.layout')
 
 @section('title', 'تفاصيل طلب الوصاية')
+@section('page-title', 'تفاصيل طلب الوصاية')
 
 @section('content')
-<div class="row">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1 class="h4 mb-0">تفاصيل طلب الوصاية</h1>
-            <div class="d-flex gap-2">
-                <a href="{{ route('admin.parcels.index') }}" class="btn btn-sm btn-outline-secondary">
-                    <i class="fas fa-arrow-right"></i> رجوع
-                </a>
-                <form action="{{ route('admin.parcels.destroy', $parcel->id) }}" method="POST" class="m-0">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من حذف طلب الوصاية؟')">
-                        <i class="fas fa-trash"></i> حذف
-                    </button>
-                </form>
-            </div>
-        </div>
+<div class="flex justify-between items-center mb-6">
+    <a href="{{ route('admin.parcels.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-gray-500 hover:text-primary-600 hover:bg-white transition-all duration-200 border-2 border-gray-200 bg-white"><i class="fas fa-arrow-right ml-1"></i> رجوع</a>
+    <form action="{{ route('admin.parcels.destroy', $parcel->id) }}" method="POST" class="inline">@csrf @method('DELETE')
+        <button type="submit" onclick="return confirm('حذف طلب الوصاية؟')" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-red-500 text-white hover:bg-red-600 transition-all duration-200 shadow-md shadow-red-500/20"><i class="fas fa-trash ml-1"></i> حذف</button>
+    </form>
+</div>
 
-        <div class="card shadow-sm mb-3">
-            <div class="card-body">
-                @php
-                    $isDelivered = $parcel->status === \App\Models\Parcel::STATUS_DELIVERED;
-                @endphp
+@php $isDelivered = $parcel->status === App\Models\Parcel::STATUS_DELIVERED; @endphp
 
-                <div class="d-flex flex-wrap gap-2 mb-3">
-                    <span class="badge bg-dark">{{ $parcel->serial_number }}</span>
-                    @if($isDelivered)
-                        <span class="badge bg-success">تم التسليم</span>
-                    @else
-                        <span class="badge bg-warning text-dark">قيد الانتظار</span>
-                    @endif
-                </div>
-
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <div class="border rounded p-3 h-100">
-                            <div class="fw-bold mb-2">معلومات الطلب</div>
-                            <div class="small text-muted">رقم الطرد</div>
-                            <div class="mb-2">{{ $parcel->parcel_number }}</div>
-
-                            <div class="small text-muted">اسم المؤسسة</div>
-                            <div class="mb-2">{{ optional($parcel->organization)->name ?? '-' }}</div>
-
-                            <div class="small text-muted">المستخدم</div>
-                            <div class="mb-2">{{ optional($parcel->user)->name ?? '-' }}</div>
-
-                            <div class="small text-muted">تاريخ الإنشاء</div>
-                            <div class="mb-2">{{ optional($parcel->created_at)->format('Y-m-d H:i') }}</div>
-
-                            <div class="small text-muted">تاريخ التسليم</div>
-                            <div class="mb-0">{{ $parcel->delivered_at ? $parcel->delivered_at->format('Y-m-d H:i') : '-' }}</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="border rounded p-3 h-100">
-                            <div class="fw-bold mb-2">معلومات الوصي</div>
-                            <div class="small text-muted">اسم الوصي</div>
-                            <div class="mb-2">{{ $parcel->agent_name ?? '-' }}</div>
-
-                            <div class="small text-muted">جوال الوصي</div>
-                            <div class="mb-2">{{ $parcel->agent_phone ?? '-' }}</div>
-
-                            <div class="small text-muted">هوية الوصي</div>
-                            <div class="mb-0">{{ $parcel->agent_id_number ?? '-' }}</div>
-                        </div>
-                    </div>
-                </div>
-
-                <hr>
-
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <div class="border rounded p-3 h-100">
-                            <div class="fw-bold mb-2">معلومات المرسل</div>
-                            <div class="small text-muted">الاسم</div>
-                            <div class="mb-2">{{ $parcel->sender_name ?? '-' }}</div>
-
-                            <div class="small text-muted">الجوال</div>
-                            <div class="mb-2">{{ $parcel->sender_phone ?? '-' }}</div>
-
-                            <div class="small text-muted">رقم الهوية</div>
-                            <div class="mb-2">{{ $parcel->sender_id_number ?? '-' }}</div>
-
-                            <div class="small text-muted">العنوان</div>
-                            <div class="mb-0">{{ $parcel->sender_address ?? '-' }}</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="border rounded p-3 h-100">
-                            <div class="fw-bold mb-2">معلومات المستلم</div>
-
-                            <div class="small text-muted">الاسم</div>
-                            <div class="mb-2">{{ $parcel->receiver_name ?? '-' }}</div>
-
-                            <div class="small text-muted">الجوال</div>
-                            <div class="mb-2">{{ $parcel->receiver_phone ?? '-' }}</div>
-
-                            <div class="small text-muted">رقم الهوية</div>
-                            <div class="mb-2">{{ $parcel->receiver_id_number ?? '-' }}</div>
-
-                            <div class="small text-muted">العنوان</div>
-                            <div class="mb-0">{{ $parcel->receiver_address ?? '-' }}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        @if(!$isDelivered)
-            <div class="card shadow-sm">
-                <div class="card-header bg-white fw-bold">تأكيد التسليم</div>
-                <div class="card-body">
-                    <form action="{{ route('admin.parcels.deliver', $parcel->id) }}" method="POST">
-                        @csrf
-                        @method('PATCH')
-
-                        <div class="row g-2">
-                            <div class="col-md-3">
-                                <input type="text" name="receiver_name" class="form-control form-control-sm @error('receiver_name') is-invalid @enderror" placeholder="اسم المستلم" value="{{ old('receiver_name', $parcel->receiver_name) }}" required>
-                                @error('receiver_name')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-3">
-                                <input type="text" name="receiver_phone" class="form-control form-control-sm @error('receiver_phone') is-invalid @enderror" placeholder="جوال المستلم" value="{{ old('receiver_phone', $parcel->receiver_phone) }}" required>
-                                @error('receiver_phone')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-3">
-                                <input type="text" name="receiver_id_number" class="form-control form-control-sm @error('receiver_id_number') is-invalid @enderror" placeholder="هوية المستلم" value="{{ old('receiver_id_number', $parcel->receiver_id_number) }}" required>
-                                @error('receiver_id_number')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-3">
-                                <input type="text" name="receiver_address" class="form-control form-control-sm @error('receiver_address') is-invalid @enderror" placeholder="عنوان المستلم" value="{{ old('receiver_address', $parcel->receiver_address) }}" required>
-                                @error('receiver_address')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-end mt-3">
-                            <button type="submit" class="btn btn-success">
-                                <i class="fas fa-check"></i>
-                                تأكيد التسليم
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+<div class="card overflow-hidden">
+    <div class="px-6 py-4 bg-gradient-to-l from-gray-50 to-white border-b border-gray-100 flex items-center gap-3">
+        <span class="px-3 py-1.5 bg-gray-800 text-white rounded-xl text-sm font-bold font-mono">{{ $parcel->serial_number }}</span>
+        @if($isDelivered)
+            <span class="px-3 py-1.5 bg-secondary-50 text-secondary-700 rounded-xl text-sm font-bold"><i class="fas fa-check-circle ml-1"></i> تم التسليم</span>
+        @else
+            <span class="px-3 py-1.5 bg-amber-50 text-amber-700 rounded-xl text-sm font-bold"><i class="fas fa-clock ml-1"></i> قيد الانتظار</span>
         @endif
     </div>
+    <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="bg-gray-50 rounded-2xl p-5 border border-gray-100">
+                <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2"><span class="w-1 h-5 bg-primary-500 rounded-full inline-block"></span>معلومات الطلب</h4>
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200/50"><span class="text-gray-400 font-medium">رقم الطرد</span><span class="font-bold text-gray-700">{{ $parcel->parcel_number }}</span></div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200/50"><span class="text-gray-400 font-medium">اسم المؤسسة</span><span class="font-bold text-gray-700">{{ $parcel->organization?->name ?? '-' }}</span></div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200/50"><span class="text-gray-400 font-medium">المستخدم</span><span class="font-bold text-gray-700">{{ $parcel->user?->name ?? '-' }}</span></div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200/50"><span class="text-gray-400 font-medium">تاريخ الإنشاء</span><span class="font-bold text-gray-700">{{ $parcel->created_at?->format('Y-m-d H:i') }}</span></div>
+                    <div class="flex justify-between items-center"><span class="text-gray-400 font-medium">تاريخ التسليم</span><span class="font-bold text-gray-700">{{ $parcel->delivered_at?->format('Y-m-d H:i') ?? '-' }}</span></div>
+                </div>
+            </div>
+            <div class="bg-gray-50 rounded-2xl p-5 border border-gray-100">
+                <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2"><span class="w-1 h-5 bg-secondary-500 rounded-full inline-block"></span>معلومات الوصي</h4>
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200/50"><span class="text-gray-400 font-medium">الاسم</span><span class="font-bold text-gray-700">{{ $parcel->agent_name ?? '-' }}</span></div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200/50"><span class="text-gray-400 font-medium">الجوال</span><span class="font-bold text-gray-700">{{ $parcel->agent_phone ?? '-' }}</span></div>
+                    <div class="flex justify-between items-center"><span class="text-gray-400 font-medium">رقم الهوية</span><span class="font-bold text-gray-700">{{ $parcel->agent_id_number ?? '-' }}</span></div>
+                </div>
+            </div>
+            <div class="bg-gray-50 rounded-2xl p-5 border border-gray-100">
+                <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2"><span class="w-1 h-5 bg-amber-500 rounded-full inline-block"></span>معلومات المرسل</h4>
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200/50"><span class="text-gray-400 font-medium">الاسم</span><span class="font-bold text-gray-700">{{ $parcel->sender_name ?? '-' }}</span></div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200/50"><span class="text-gray-400 font-medium">الجوال</span><span class="font-bold text-gray-700">{{ $parcel->sender_phone ?? '-' }}</span></div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200/50"><span class="text-gray-400 font-medium">رقم الهوية</span><span class="font-bold text-gray-700">{{ $parcel->sender_id_number ?? '-' }}</span></div>
+                    <div class="flex justify-between items-center"><span class="text-gray-400 font-medium">العنوان</span><span class="font-bold text-gray-700">{{ $parcel->sender_address ?? '-' }}</span></div>
+                </div>
+            </div>
+            <div class="bg-gray-50 rounded-2xl p-5 border border-gray-100">
+                <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2"><span class="w-1 h-5 bg-red-500 rounded-full inline-block"></span>معلومات المستلم</h4>
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200/50"><span class="text-gray-400 font-medium">الاسم</span><span class="font-bold text-gray-700">{{ $parcel->receiver_name ?? '-' }}</span></div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200/50"><span class="text-gray-400 font-medium">الجوال</span><span class="font-bold text-gray-700">{{ $parcel->receiver_phone ?? '-' }}</span></div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200/50"><span class="text-gray-400 font-medium">رقم الهوية</span><span class="font-bold text-gray-700">{{ $parcel->receiver_id_number ?? '-' }}</span></div>
+                    <div class="flex justify-between items-center"><span class="text-gray-400 font-medium">العنوان</span><span class="font-bold text-gray-700">{{ $parcel->receiver_address ?? '-' }}</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@if(!$isDelivered)
+<div class="card mt-6 overflow-hidden">
+    <div class="px-6 py-4 bg-gradient-to-l from-gray-50 to-white border-b border-gray-100 font-bold text-gray-800 flex items-center gap-2"><i class="fas fa-check-circle text-secondary-500"></i> تأكيد التسليم</div>
+    <div class="p-6">
+        <form action="{{ route('admin.parcels.deliver', $parcel->id) }}" method="POST">
+            @csrf @method('PATCH')
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+                <input type="text" name="receiver_name" placeholder="اسم المستلم" value="{{ old('receiver_name', $parcel->receiver_name) }}" required class="input text-sm @error('receiver_name') border-red-300 bg-red-50 @enderror">
+                <input type="text" name="receiver_phone" placeholder="جوال المستلم" value="{{ old('receiver_phone', $parcel->receiver_phone) }}" required class="input text-sm @error('receiver_phone') border-red-300 bg-red-50 @enderror">
+                <input type="text" name="receiver_id_number" placeholder="هوية المستلم" value="{{ old('receiver_id_number', $parcel->receiver_id_number) }}" required class="input text-sm @error('receiver_id_number') border-red-300 bg-red-50 @enderror">
+                <input type="text" name="receiver_address" placeholder="عنوان المستلم" value="{{ old('receiver_address', $parcel->receiver_address) }}" required class="input text-sm @error('receiver_address') border-red-300 bg-red-50 @enderror">
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-l from-secondary-500 to-secondary-600 text-white rounded-xl text-sm font-bold hover:shadow-xl hover:shadow-secondary-500/30 transition-all duration-200 active:scale-95"><i class="fas fa-check"></i> تأكيد التسليم</button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
 @endsection

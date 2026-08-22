@@ -3,18 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\Parcel;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class ParcelController extends Controller
 {
     public function index(Request $request)
     {
-        if (!Auth::check() || Auth::user()->email !== 'admin@example.com') {
-            abort(403, 'Unauthorized action.');
-        }
-
         $status = $request->query('status', 'all');
         $search = trim((string) $request->query('q', ''));
 
@@ -36,7 +32,7 @@ class ParcelController extends Controller
             });
         }
 
-        $parcels = $query->orderByDesc('created_at')->get();
+        $parcels = $query->orderByDesc('created_at')->paginate(15)->withQueryString();
 
         $stats = [
             'total' => Parcel::count(),
@@ -49,10 +45,6 @@ class ParcelController extends Controller
 
     public function show(Parcel $parcel)
     {
-        if (!Auth::check() || Auth::user()->email !== 'admin@example.com') {
-            abort(403, 'Unauthorized action.');
-        }
-
         $parcel->load(['user', 'organization']);
 
         return view('admin.parcels.show', compact('parcel'));
@@ -60,10 +52,6 @@ class ParcelController extends Controller
 
     public function deliver(Request $request, Parcel $parcel)
     {
-        if (!Auth::check() || Auth::user()->email !== 'admin@example.com') {
-            abort(403, 'Unauthorized action.');
-        }
-
         if ($parcel->status === Parcel::STATUS_DELIVERED) {
             return redirect()->route('admin.parcels.show', $parcel)
                 ->with('success', 'هذا الطلب تم تسليمه مسبقاً');
@@ -81,15 +69,27 @@ class ParcelController extends Controller
             'delivered_at' => now(),
         ]);
 
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'parcel_delivered',
+            'model_type' => Parcel::class,
+            'model_id' => $parcel->id,
+            'description' => "تم تأكيد تسليم الطلب رقم {$parcel->serial_number}",
+        ]);
+
         return redirect()->route('admin.parcels.show', $parcel)
             ->with('success', 'تم تأكيد تسليم الطلب بنجاح');
     }
 
     public function destroy(Parcel $parcel)
     {
-        if (!Auth::check() || Auth::user()->email !== 'admin@example.com') {
-            abort(403, 'Unauthorized action.');
-        }
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'parcel_deleted',
+            'model_type' => Parcel::class,
+            'model_id' => $parcel->id,
+            'description' => "تم حذف طلب الوصاية رقم {$parcel->serial_number}",
+        ]);
 
         $parcel->delete();
 

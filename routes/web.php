@@ -21,15 +21,6 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('/register', [RegisterController::class, 'register']);
     
-    // Password Reset Routes
-    Route::get('password/reset', 'App\\Http\\Controllers\\Auth\\ForgotPasswordController@showLinkRequestForm')
-        ->name('password.request');
-    Route::post('password/email', 'App\\Http\\Controllers\\Auth\\ForgotPasswordController@sendResetLinkEmail')
-        ->name('password.email');
-    Route::get('password/reset/{token}', 'App\\Http\\Controllers\\Auth\\ResetPasswordController@showResetForm')
-        ->name('password.reset');
-    Route::post('password/reset', 'App\\Http\\Controllers\\Auth\\ResetPasswordController@reset')
-        ->name('password.update');
 });
 
 // Organization auth routes are independent so you can be logged in as a user and as an organization in the same browser session
@@ -94,19 +85,8 @@ Route::middleware('auth')->group(function () {
 
     // Parcel Routes
     Route::prefix('parcels')->group(function () {
-        // Create new parcel form - must come before parameterized routes
         Route::get('/create', [ParcelController::class, 'create'])->name('parcels.create');
-        
-        // Deliver form - must come before parameterized routes
-        Route::get('/deliver', [ParcelController::class, 'deliverForm'])->name('parcels.deliver-form');
-        
-        // Store new parcel
         Route::post('/', [ParcelController::class, 'store'])->name('parcels.store');
-        
-        // Process delivery
-        Route::post('/{serial_number}/deliver', [ParcelController::class, 'deliver'])->name('parcels.deliver');
-        
-        // Show parcel details (handles both direct access and search)
         Route::get('/{serial_number?}', [ParcelController::class, 'show'])
             ->name('parcels.show')
             ->where('serial_number', '.*');

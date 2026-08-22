@@ -15,7 +15,9 @@ class AdminUserSeeder extends Seeder
     public function run(): void
     {
         // Check if admin already exists
-        if (!User::where('email', 'admin@example.com')->exists()) {
+        $user = User::where('email', 'admin@example.com')->first();
+        
+        if (!$user) {
             User::create([
                 'name' => 'Admin',
                 'id_number' => '1234567890',
@@ -30,7 +32,12 @@ class AdminUserSeeder extends Seeder
             $this->command->info('Email: admin@example.com');
             $this->command->info('Password: 1234');
         } else {
-            $this->command->info('Admin user already exists.');
+            $user->update([
+                'is_admin' => true,
+                'is_approved' => true,
+            ]);
+            
+            $this->command->info('Admin user updated to admin.');
         }
     }
 }

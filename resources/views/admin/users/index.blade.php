@@ -1,121 +1,92 @@
 @extends('admin.layout')
 
 @section('title', 'إدارة المستخدمين')
+@section('page-title', 'إدارة المستخدمين')
 
 @section('content')
-<div class="row">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1 class="h4 mb-0">إدارة المستخدمين</h1>
-            <div>
-                <a href="{{ route('admin.dashboard') }}" class="btn btn-sm btn-outline-secondary">
-                    <i class="fas fa-arrow-right"></i> العودة للرئيسية
-                </a>
-            </div>
-        </div>
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+    <div class="flex gap-2">
+        <a href="{{ route('admin.users.index', ['status' => 'pending']) }}" class="px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 {{ ($status ?? 'pending') === 'pending' ? 'bg-amber-50 text-amber-700 border-2 border-amber-200 shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-50 border-2 border-gray-200' }}">معلّقون</a>
+        <a href="{{ route('admin.users.index', ['status' => 'approved']) }}" class="px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 {{ ($status ?? '') === 'approved' ? 'bg-secondary-50 text-secondary-700 border-2 border-secondary-200 shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-50 border-2 border-gray-200' }}">موافق عليهم</a>
+        <a href="{{ route('admin.users.index', ['status' => 'all']) }}" class="px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 {{ ($status ?? '') === 'all' ? 'bg-gray-800 text-white border-2 border-gray-800 shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-50 border-2 border-gray-200' }}">الكل</a>
+    </div>
+    <a href="{{ route('admin.dashboard') }}" class="text-sm text-gray-500 hover:text-primary-600 transition-colors font-medium"><i class="fas fa-arrow-right ml-1"></i> العودة</a>
+</div>
 
-        @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-        @if(session('info'))
-            <div class="alert alert-info">{{ session('info') }}</div>
-        @endif
-
-        <div class="card shadow-sm mb-3">
-            <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-md-4 mb-2">
-                        <div>إجمالي المستخدمين</div>
-                        <div class="fw-bold fs-5">{{ $stats['total'] ?? 0 }}</div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div>المستخدمون المفعلون</div>
-                        <div class="fw-bold fs-5 text-success">{{ $stats['approved'] ?? 0 }}</div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div>في انتظار الموافقة</div>
-                        <div class="fw-bold fs-5 text-warning">{{ $stats['pending'] ?? 0 }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card shadow-sm">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <div class="fw-bold">قائمة المستخدمين</div>
-                <div class="btn-group" role="group">
-                    <a href="{{ route('admin.users.index', ['status' => 'pending']) }}" class="btn btn-sm btn-outline-warning {{ ($status ?? 'pending') === 'pending' ? 'active' : '' }}">معلّقون</a>
-                    <a href="{{ route('admin.users.index', ['status' => 'approved']) }}" class="btn btn-sm btn-outline-success {{ ($status ?? '') === 'approved' ? 'active' : '' }}">موافق عليهم</a>
-                    <a href="{{ route('admin.users.index', ['status' => 'all']) }}" class="btn btn-sm btn-outline-secondary {{ ($status ?? '') === 'all' ? 'active' : '' }}">الكل</a>
-                </div>
-            </div>
-            <div class="card-body">
-                @if($users->count() > 0)
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th style="width:50px">#</th>
-                                    <th>الاسم</th>
-                                    <th>رقم الهوية</th>
-                                    <th>الجوال</th>
-                                    <th>البريد الإلكتروني</th>
-                                    <th>الحالة</th>
-                                    <th>تاريخ الطلب</th>
-                                    <th style="width:220px">الإجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($users as $index => $user)
-                                    <tr>
-                                        <td class="text-muted">{{ $index + 1 }}</td>
-                                        <td>{{ $user->name }}</td>
-                                        <td>{{ $user->id_number }}</td>
-                                        <td>{{ $user->phone }}</td>
-                                        <td>{{ $user->email }}</td>
-                                        <td>
-                                            @if($user->is_approved)
-                                                <span class="badge bg-success">مفعل</span>
-                                            @else
-                                                <span class="badge bg-warning text-dark">معلّق</span>
-                                            @endif
-                                        </td>
-                                        <td>{{ $user->created_at->format('Y-m-d') }}</td>
-                                        <td>
-                                            <div class="d-flex gap-2">
-                                                @if(!$user->is_approved)
-                                                    <a href="{{ route('admin.users.approve', $user->id) }}" 
-                                                       class="btn btn-sm btn-success" title="موافقة"
-                                                       onclick="return confirm('هل أنت متأكد من الموافقة على هذا المستخدم؟')">
-                                                        <i class="fas fa-check"></i>
-                                                    </a>
-                                                @endif
-
-                                                <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="m-0">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger" title="حذف"
-                                                            onclick="return confirm('هل أنت متأكد من حذف هذا المستخدم؟')">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
-
-                                                <a href="mailto:{{ $user->email }}" class="btn btn-sm btn-outline-secondary" title="إرسال بريد">
-                                                    <i class="fas fa-envelope"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @else
-                    <div class="alert alert-info mb-0">لا توجد طلبات تسجيل جديدة في الوقت الحالي.</div>
-                @endif
-            </div>
-        </div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-l from-primary-500 to-primary-700"></div>
+        <div class="text-2xl font-black text-gray-800">{{ $stats['total'] ?? 0 }}</div>
+        <div class="text-xs text-gray-500 font-medium mt-1">إجمالي المستخدمين</div>
+    </div>
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-l from-secondary-500 to-secondary-600"></div>
+        <div class="text-2xl font-black text-secondary-600">{{ $stats['approved'] ?? 0 }}</div>
+        <div class="text-xs text-gray-500 font-medium mt-1">المستخدمون المفعلون</div>
+    </div>
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-l from-amber-500 to-amber-600"></div>
+        <div class="text-2xl font-black text-amber-600">{{ $stats['pending'] ?? 0 }}</div>
+        <div class="text-xs text-gray-500 font-medium mt-1">في انتظار الموافقة</div>
     </div>
 </div>
 
+<div class="card">
+    <div class="p-6">
+        @if($users->count() > 0)
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b-2 border-gray-100">
+                            <th class="px-4 py-3 text-xs font-bold text-gray-500 text-right">#</th>
+                            <th class="px-4 py-3 text-xs font-bold text-gray-500 text-right">الاسم</th>
+                            <th class="px-4 py-3 text-xs font-bold text-gray-500 text-right">رقم الهوية</th>
+                            <th class="px-4 py-3 text-xs font-bold text-gray-500 text-right">الجوال</th>
+                            <th class="px-4 py-3 text-xs font-bold text-gray-500 text-right">البريد</th>
+                            <th class="px-4 py-3 text-xs font-bold text-gray-500 text-right">الحالة</th>
+                            <th class="px-4 py-3 text-xs font-bold text-gray-500 text-right">تاريخ الطلب</th>
+                            <th class="px-4 py-3 text-xs font-bold text-gray-500 text-right">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($users as $index => $user)
+                            <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                                <td class="px-4 py-3 text-sm text-gray-400">{{ $users->firstItem() + $loop->index }}</td>
+                                <td class="px-4 py-3 text-sm font-bold text-gray-800">{{ $user->name }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ $user->id_number }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ $user->phone }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ $user->email }}</td>
+                                <td class="px-4 py-3">
+                                    @if($user->is_approved)
+                                        <span class="badge bg-secondary-50 text-secondary-700">مفعل</span>
+                                    @else
+                                        <span class="badge bg-amber-50 text-amber-700">معلّق</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ $user->created_at->format('Y-m-d') }}</td>
+                                <td class="px-4 py-3">
+                                    <div class="flex gap-1.5">
+                                        @if(!$user->is_approved)
+                                            <a href="{{ route('admin.users.approve', $user->id) }}" onclick="return confirm('الموافقة على هذا المستخدم؟')" class="w-8 h-8 flex items-center justify-center rounded-xl bg-secondary-50 text-secondary-600 hover:bg-secondary-100 transition-colors text-xs" title="موافقة"><i class="fas fa-check"></i></a>
+                                        @endif
+                                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="inline">@csrf @method('DELETE')
+                                            <button type="submit" onclick="return confirm('حذف هذا المستخدم؟')" class="w-8 h-8 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-colors text-xs" title="حذف"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                        <a href="mailto:{{ $user->email }}" class="w-8 h-8 flex items-center justify-center rounded-xl bg-gray-50 text-gray-500 hover:bg-gray-100 transition-colors text-xs" title="إرسال بريد"><i class="fas fa-envelope"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-6">{{ $users->links('pagination::tailwind') }}</div>
+        @else
+            <div class="text-center py-16">
+                <div class="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4"><i class="fas fa-users-slash text-3xl text-gray-300"></i></div>
+                <p class="font-bold text-gray-400">لا توجد نتائج</p>
+            </div>
+        @endif
+    </div>
+</div>
 @endsection

@@ -6,39 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
 
 class RegisterController extends Controller
 {
-    /**
-     * Where to redirect users after registration.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/';
-
-    /**
-     * Get the post register / login redirect path.
-     *
-     * @return string
-     */
-    public function redirectPath()
-    {
-        if (method_exists($this, 'redirectTo')) {
-            return $this->redirectTo();
-        }
-
-        return property_exists($this, 'redirectTo') ? $this->redirectTo : '/home';
-    }
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('guest');
@@ -75,16 +49,6 @@ class RegisterController extends Controller
     }
 
     /**
-     * Get the guard to be used during registration.
-     *
-     * @return \Illuminate\Contracts\Auth\StatefulGuard
-     */
-    protected function guard()
-    {
-        return Auth::guard();
-    }
-
-    /**
      * Get a validator for an incoming registration request.
      *
      * @param  array  $data
@@ -100,15 +64,11 @@ class RegisterController extends Controller
             'password' => [
                 'required',
                 'string',
-                'min:4',
-                'max:4',
+                'min:6',
                 'confirmed',
-                'regex:/^[0-9]+$/',
+                Password::min(6)->letters()->mixedCase()->numbers(),
             ],
         ], [
-            'password.regex' => 'يجب أن يتكون الرمز السري من أرقام فقط',
-            'password.min' => 'يجب أن يتكون الرمز السري من 4 أرقام',
-            'password.max' => 'يجب أن يتكون الرمز السري من 4 أرقام',
             'id_number.unique' => 'رقم الهوية مسجل مسبقاً',
             'email.unique' => 'البريد الإلكتروني مسجل مسبقاً',
             'email.email' => 'يجب إدخال بريد إلكتروني صحيح',
@@ -134,20 +94,4 @@ class RegisterController extends Controller
         ]);
     }
     
-    /**
-     * The user has been registered but needs admin approval.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  mixed  $user
-     * @return mixed
-     */
-    protected function registered(Request $request, $user)
-    {
-        // Log the user out since they need admin approval
-        Auth::logout();
-        
-        // Redirect to login with a message
-        return redirect('/login')
-            ->with('status', 'تم تقديم طلب التسجيل بنجاح. يرجى انتظار موافقة المسؤول على حسابك.');
-    }
 }

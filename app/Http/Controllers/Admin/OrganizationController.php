@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\Organization;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class OrganizationController extends Controller
 {
@@ -14,10 +14,6 @@ class OrganizationController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Auth::check() || Auth::user()->email !== 'admin@example.com') {
-            abort(403, 'Unauthorized action.');
-        }
-
         $status = $request->query('status', 'all');
 
         $query = Organization::query();
@@ -30,7 +26,7 @@ class OrganizationController extends Controller
             });
         }
 
-        $organizations = $query->orderByDesc('created_at')->get();
+        $organizations = $query->orderByDesc('created_at')->paginate(15)->withQueryString();
 
         $stats = [
             'total' => Organization::count(),
@@ -46,12 +42,16 @@ class OrganizationController extends Controller
      */
     public function toggleApproval(Organization $organization)
     {
-        if (!Auth::check() || Auth::user()->email !== 'admin@example.com') {
-            abort(403, 'Unauthorized action.');
-        }
-
         $organization->is_approved = ! (bool) $organization->is_approved;
         $organization->save();
+
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => $organization->is_approved ? 'org_approved' : 'org_disabled',
+            'model_type' => Organization::class,
+            'model_id' => $organization->id,
+            'description' => ($organization->is_approved ? 'تم تفعيل' : 'تم إلغاء تفعيل') . " المؤسسة {$organization->name}",
+        ]);
 
         $message = $organization->is_approved
             ? 'تم تفعيل المؤسسة بنجاح'
@@ -66,9 +66,13 @@ class OrganizationController extends Controller
      */
     public function destroy(Organization $organization)
     {
-        if (!Auth::check() || Auth::user()->email !== 'admin@example.com') {
-            abort(403, 'Unauthorized action.');
-        }
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'org_deleted',
+            'model_type' => Organization::class,
+            'model_id' => $organization->id,
+            'description' => "تم حذف المؤسسة {$organization->name}",
+        ]);
 
         $organization->delete();
 

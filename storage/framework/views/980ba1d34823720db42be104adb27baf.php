@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'وصيّ - نظام إدارة الوصاية')</title>
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <title><?php echo $__env->yieldContent('title', 'وصيّ - نظام إدارة الوصاية'); ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -49,51 +49,51 @@
         .card-custom { @apply bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-gray-200/60; }
         .badge { @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold; }
     </style>
-    @stack('styles')
+    <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
 <body class="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 via-white to-gray-50 text-gray-800 antialiased">
     <header x-data="{ mobileOpen: false }" class="glass sticky top-0 z-50 border-b border-gray-100/80">
         <div class="container mx-auto px-4 lg:px-6">
             <div class="flex items-center justify-between h-18 lg:h-20">
-                <a href="{{ url('/') }}" class="flex items-center gap-2.5 group shrink-0">
+                <a href="<?php echo e(url('/')); ?>" class="flex items-center gap-2.5 group shrink-0">
                     <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary-500/20 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                         <i class="fas fa-shield-halved text-lg"></i>
                     </div>
                     <span class="text-xl font-black bg-gradient-to-l from-primary-600 to-primary-400 bg-clip-text text-transparent">وصيّ</span>
                 </a>
                 <nav class="hidden lg:flex items-center gap-1">
-                    <a href="{{ route('home') }}" class="nav-link-custom px-3 py-2 {{ request()->routeIs('home') ? 'active' : '' }}">الرئيسية</a>
-                    @auth
-                        @if (Route::has('organizations.index'))
-                            <a href="{{ route('organizations.index') }}" class="nav-link-custom px-3 py-2 {{ request()->routeIs('organizations.*') ? 'active' : '' }}">الجهات</a>
-                        @endif
-                    @endauth
+                    <a href="<?php echo e(route('home')); ?>" class="nav-link-custom px-3 py-2 <?php echo e(request()->routeIs('home') ? 'active' : ''); ?>">الرئيسية</a>
+                    <?php if(auth()->guard()->check()): ?>
+                        <?php if(Route::has('organizations.index')): ?>
+                            <a href="<?php echo e(route('organizations.index')); ?>" class="nav-link-custom px-3 py-2 <?php echo e(request()->routeIs('organizations.*') ? 'active' : ''); ?>">الجهات</a>
+                        <?php endif; ?>
+                    <?php endif; ?>
                 </nav>
                 <div class="flex items-center gap-2 lg:gap-3">
-                    @guest
-                        <a href="{{ route('login') }}" class="hidden lg:inline-flex btn-secondary text-sm px-4 py-2">تسجيل الدخول</a>
-                        <a href="{{ route('register') }}" class="btn-primary text-sm px-4 py-2">إنشاء حساب</a>
-                    @else
+                    <?php if(auth()->guard()->guest()): ?>
+                        <a href="<?php echo e(route('login')); ?>" class="hidden lg:inline-flex btn-secondary text-sm px-4 py-2">تسجيل الدخول</a>
+                        <a href="<?php echo e(route('register')); ?>" class="btn-primary text-sm px-4 py-2">إنشاء حساب</a>
+                    <?php else: ?>
                         <div x-data="{ open: false }" class="relative">
                             <button @click="open = !open" @click.outside="open = false" class="flex items-center gap-2 bg-white border-2 border-gray-100 hover:border-primary-200 rounded-xl px-3 py-1.5 transition-all duration-200 group">
-                                <span class="hidden sm:inline text-sm font-medium text-gray-700 group-hover:text-primary-600">{{ Auth::user()->name }}</span>
+                                <span class="hidden sm:inline text-sm font-medium text-gray-700 group-hover:text-primary-600"><?php echo e(Auth::user()->name); ?></span>
                                 <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center text-primary-600 border-2 border-white shadow-sm">
                                     <i class="fas fa-user text-sm"></i>
                                 </div>
                             </button>
                             <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="absolute left-0 mt-2 w-56 rounded-2xl shadow-xl shadow-gray-200/50 bg-white ring-1 ring-black/5 overflow-hidden z-50 border border-gray-50" style="display: none;">
                                 <div class="p-2">
-                                    <a href="{{ route('profile.show') }}" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-xl transition-all duration-200"><i class="fas fa-user-circle text-lg text-primary-400 w-5 text-center"></i> الملف الشخصي</a>
-                                    @if(auth()->user()->isAdmin() && Route::has('admin.dashboard'))
-                                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-xl transition-all duration-200"><i class="fas fa-gauge-high text-lg text-primary-400 w-5 text-center"></i> لوحة التحكم</a>
-                                    @endif
+                                    <a href="<?php echo e(route('profile.show')); ?>" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-xl transition-all duration-200"><i class="fas fa-user-circle text-lg text-primary-400 w-5 text-center"></i> الملف الشخصي</a>
+                                    <?php if(auth()->user()->isAdmin() && Route::has('admin.dashboard')): ?>
+                                        <a href="<?php echo e(route('admin.dashboard')); ?>" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-xl transition-all duration-200"><i class="fas fa-gauge-high text-lg text-primary-400 w-5 text-center"></i> لوحة التحكم</a>
+                                    <?php endif; ?>
                                     <hr class="my-1 border-gray-100">
-                                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200"><i class="fas fa-right-from-bracket text-lg w-5 text-center"></i> تسجيل الخروج</a>
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">@csrf</form>
+                                    <a href="<?php echo e(route('logout')); ?>" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200"><i class="fas fa-right-from-bracket text-lg w-5 text-center"></i> تسجيل الخروج</a>
+                                    <form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" class="hidden"><?php echo csrf_field(); ?></form>
                                 </div>
                             </div>
                         </div>
-                    @endguest
+                    <?php endif; ?>
                     <button @click="mobileOpen = !mobileOpen" class="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl text-gray-600 hover:bg-gray-100 transition-all duration-200">
                         <i class="fas fa-bars text-xl" x-show="!mobileOpen"></i>
                         <i class="fas fa-xmark text-xl" x-show="mobileOpen" style="display: none;"></i>
@@ -103,33 +103,33 @@
         </div>
         <div x-show="mobileOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2" class="lg:hidden border-t border-gray-100 glass" style="display: none;">
             <div class="container mx-auto px-4 py-4 space-y-1">
-                <a href="{{ route('home') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('home') ? 'bg-primary-50 text-primary-600 font-bold' : 'text-gray-700 hover:bg-gray-50' }} transition-all duration-200"><i class="fas fa-house w-5 text-center"></i>الرئيسية</a>
-                @auth
-                    @if (Route::has('organizations.index'))
-                        <a href="{{ route('organizations.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('organizations.*') ? 'bg-primary-50 text-primary-600 font-bold' : 'text-gray-700 hover:bg-gray-50' }} transition-all duration-200"><i class="fas fa-building w-5 text-center"></i>الجهات</a>
-                    @endif
+                <a href="<?php echo e(route('home')); ?>" class="flex items-center gap-3 px-4 py-3 rounded-xl <?php echo e(request()->routeIs('home') ? 'bg-primary-50 text-primary-600 font-bold' : 'text-gray-700 hover:bg-gray-50'); ?> transition-all duration-200"><i class="fas fa-house w-5 text-center"></i>الرئيسية</a>
+                <?php if(auth()->guard()->check()): ?>
+                    <?php if(Route::has('organizations.index')): ?>
+                        <a href="<?php echo e(route('organizations.index')); ?>" class="flex items-center gap-3 px-4 py-3 rounded-xl <?php echo e(request()->routeIs('organizations.*') ? 'bg-primary-50 text-primary-600 font-bold' : 'text-gray-700 hover:bg-gray-50'); ?> transition-all duration-200"><i class="fas fa-building w-5 text-center"></i>الجهات</a>
+                    <?php endif; ?>
                     <hr class="my-2 border-gray-100">
-                    @if (Route::has('parcels.create'))
-                        <a href="{{ route('parcels.create') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-primary-600 hover:bg-primary-50 transition-all duration-200"><i class="fas fa-circle-plus w-5 text-center"></i>طلب جديد</a>
-                    @endif
-                    @if (Route::has('parcels.my'))
-                        <a href="{{ route('parcels.my') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 transition-all duration-200"><i class="fas fa-list w-5 text-center"></i>عرض طلباتي</a>
-                    @endif
-                @else
+                    <?php if(Route::has('parcels.create')): ?>
+                        <a href="<?php echo e(route('parcels.create')); ?>" class="flex items-center gap-3 px-4 py-3 rounded-xl text-primary-600 hover:bg-primary-50 transition-all duration-200"><i class="fas fa-circle-plus w-5 text-center"></i>طلب جديد</a>
+                    <?php endif; ?>
+                    <?php if(Route::has('parcels.my')): ?>
+                        <a href="<?php echo e(route('parcels.my')); ?>" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 transition-all duration-200"><i class="fas fa-list w-5 text-center"></i>عرض طلباتي</a>
+                    <?php endif; ?>
+                <?php else: ?>
                     <hr class="my-2 border-gray-100">
-                    <a href="{{ route('login') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 transition-all duration-200"><i class="fas fa-right-to-bracket w-5 text-center"></i>تسجيل الدخول</a>
-                @endauth
+                    <a href="<?php echo e(route('login')); ?>" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 transition-all duration-200"><i class="fas fa-right-to-bracket w-5 text-center"></i>تسجيل الدخول</a>
+                <?php endif; ?>
             </div>
         </div>
     </header>
     <main class="flex-1">
-        @if(session('success'))
-            <div class="bg-gradient-to-l from-secondary-500 to-secondary-600 text-white px-4 py-3 text-center text-sm font-medium shadow-lg shadow-secondary-500/20">{{ session('success') }}</div>
-        @endif
-        @if(session('error'))
-            <div class="bg-gradient-to-l from-red-500 to-red-600 text-white px-4 py-3 text-center text-sm font-medium shadow-lg shadow-red-500/20">{{ session('error') }}</div>
-        @endif
-        @yield('content')
+        <?php if(session('success')): ?>
+            <div class="bg-gradient-to-l from-secondary-500 to-secondary-600 text-white px-4 py-3 text-center text-sm font-medium shadow-lg shadow-secondary-500/20"><?php echo e(session('success')); ?></div>
+        <?php endif; ?>
+        <?php if(session('error')): ?>
+            <div class="bg-gradient-to-l from-red-500 to-red-600 text-white px-4 py-3 text-center text-sm font-medium shadow-lg shadow-red-500/20"><?php echo e(session('error')); ?></div>
+        <?php endif; ?>
+        <?php echo $__env->yieldContent('content'); ?>
     </main>
     <footer class="bg-gray-900 text-gray-400 mt-auto">
         <div class="container mx-auto px-4 lg:px-6 py-10">
@@ -144,11 +144,11 @@
                 <div>
                     <h3 class="text-white font-bold mb-4">روابط سريعة</h3>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">الرئيسية</a></li>
-                        @auth
-                            @if (Route::has('organizations.index'))<li><a href="{{ route('organizations.index') }}" class="hover:text-white transition-colors">الجهات</a></li>@endif
-                        @endauth
-                        <li><a href="{{ route('register') }}" class="hover:text-white transition-colors">إنشاء حساب</a></li>
+                        <li><a href="<?php echo e(route('home')); ?>" class="hover:text-white transition-colors">الرئيسية</a></li>
+                        <?php if(auth()->guard()->check()): ?>
+                            <?php if(Route::has('organizations.index')): ?><li><a href="<?php echo e(route('organizations.index')); ?>" class="hover:text-white transition-colors">الجهات</a></li><?php endif; ?>
+                        <?php endif; ?>
+                        <li><a href="<?php echo e(route('register')); ?>" class="hover:text-white transition-colors">إنشاء حساب</a></li>
                     </ul>
                 </div>
                 <div>
@@ -159,9 +159,9 @@
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-gray-800 mt-8 pt-4 text-center text-xs">© {{ date('Y') }} وصيّ. جميع الحقوق محفوظة.</div>
+            <div class="border-t border-gray-800 mt-8 pt-4 text-center text-xs">© <?php echo e(date('Y')); ?> وصيّ. جميع الحقوق محفوظة.</div>
         </div>
     </footer>
-    @stack('scripts')
+    <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
-</html>
+</html><?php /**PATH C:\Users\victus\Desktop\projects\wa3ee\resources\views/layouts/app.blade.php ENDPATH**/ ?>

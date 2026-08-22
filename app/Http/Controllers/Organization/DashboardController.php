@@ -84,6 +84,13 @@ class DashboardController extends Controller
      */
     public function updateStatus(Parcel $parcel, Request $request)
     {
+        $organization = auth('organization')->user();
+
+        if ($parcel->organization_id !== $organization->id) {
+            return redirect()->route('organization.dashboard')
+                ->with('error', 'هذا الطلب غير مرتبط بمؤسستك.');
+        }
+
         $request->validate([
             'status' => 'required|in:' . implode(',', [
                 Parcel::STATUS_PENDING,
@@ -103,10 +110,6 @@ class DashboardController extends Controller
             'receiver_id_number' => $request->receiver_id_number,
             'receiver_address' => $request->receiver_address,
         ];
-
-        if ($request->status === Parcel::STATUS_DELIVERED) {
-            $updateData['organization_id'] = auth('organization')->id();
-        }
 
         $parcel->update($updateData);
 

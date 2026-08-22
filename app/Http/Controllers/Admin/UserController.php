@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -14,10 +14,6 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Auth::check() || Auth::user()->email !== 'admin@example.com') {
-            abort(403, 'Unauthorized action.');
-        }
-
         $status = $request->query('status', 'pending');
 
         $query = User::query();
@@ -28,7 +24,7 @@ class UserController extends Controller
             $query->where('is_approved', true);
         }
 
-        $users = $query->orderByDesc('created_at')->get();
+        $users = $query->orderByDesc('created_at')->paginate(15)->withQueryString();
 
         $stats = [
             'total' => User::count(),
@@ -44,11 +40,6 @@ class UserController extends Controller
      */
     public function approve(User $user)
     {
-        if (!Auth::check() || Auth::user()->email !== 'admin@example.com') {
-            abort(403, 'Unauthorized action.');
-        }
-        
-        // Check if user is already approved
         if ($user->is_approved) {
             return redirect()->route('admin.users.index')
                 ->with('info', 'هذا المستخدم موافق عليه مسبقاً');
@@ -56,6 +47,14 @@ class UserController extends Controller
         
         $user->is_approved = true;
         $user->save();
+
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'user_approved',
+            'model_type' => User::class,
+            'model_id' => $user->id,
+            'description' => "تمت الموافقة على المستخدم {$user->name}",
+        ]);
 
         return redirect()->route('admin.users.index')
             ->with('success', 'تمت الموافقة على المستخدم بنجاح');
@@ -66,11 +65,16 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::check() || Auth::user()->email !== 'admin@example.com') {
-            abort(403, 'Unauthorized action.');
-        }
-
         $user = User::findOrFail($id);
+
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'user_rejected',
+            'model_type' => User::class,
+            'model_id' => $user->id,
+            'description' => "تم رفض المستخدم {$user->name} وحذف الحساب",
+        ]);
+
         $user->delete();
 
         return redirect()->route('admin.users.index')

@@ -1,114 +1,87 @@
 @extends('admin.layout')
 
 @section('title', 'إدارة المؤسسات')
+@section('page-title', 'إدارة المؤسسات')
 
 @section('content')
-<div class="row">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1 class="h4 mb-0">إدارة المؤسسات</h1>
-            <a href="{{ route('admin.dashboard') }}" class="btn btn-sm btn-outline-secondary">
-                <i class="fas fa-arrow-right"></i> العودة للرئيسية
-            </a>
-        </div>
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+    <div class="flex gap-2">
+        <a href="{{ route('admin.organizations.index', ['status' => 'all']) }}" class="px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 {{ ($status ?? 'all') === 'all' ? 'bg-gray-800 text-white border-2 border-gray-800 shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-50 border-2 border-gray-200' }}">الكل</a>
+        <a href="{{ route('admin.organizations.index', ['status' => 'approved']) }}" class="px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 {{ ($status ?? '') === 'approved' ? 'bg-secondary-50 text-secondary-700 border-2 border-secondary-200 shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-50 border-2 border-gray-200' }}">مفعلة</a>
+        <a href="{{ route('admin.organizations.index', ['status' => 'pending']) }}" class="px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 {{ ($status ?? '') === 'pending' ? 'bg-amber-50 text-amber-700 border-2 border-amber-200 shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-50 border-2 border-gray-200' }}">معلقة</a>
+    </div>
+    <a href="{{ route('admin.dashboard') }}" class="text-sm text-gray-500 hover:text-primary-600 transition-colors font-medium"><i class="fas fa-arrow-right ml-1"></i> العودة</a>
+</div>
 
-        @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-l from-primary-500 to-primary-700"></div>
+        <div class="text-2xl font-black text-gray-800">{{ $stats['total'] ?? 0 }}</div>
+        <div class="text-xs text-gray-500 font-medium mt-1">إجمالي المؤسسات</div>
+    </div>
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-l from-secondary-500 to-secondary-600"></div>
+        <div class="text-2xl font-black text-secondary-600">{{ $stats['approved'] ?? 0 }}</div>
+        <div class="text-xs text-gray-500 font-medium mt-1">المؤسسات المفعلة</div>
+    </div>
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-l from-amber-500 to-amber-600"></div>
+        <div class="text-2xl font-black text-amber-600">{{ $stats['pending'] ?? 0 }}</div>
+        <div class="text-xs text-gray-500 font-medium mt-1">في انتظار الموافقة</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="p-6">
+        @if($organizations->count() > 0)
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b-2 border-gray-100">
+                            <th class="px-4 py-3 text-xs font-bold text-gray-500 text-right">#</th>
+                            <th class="px-4 py-3 text-xs font-bold text-gray-500 text-right">اسم المؤسسة</th>
+                            <th class="px-4 py-3 text-xs font-bold text-gray-500 text-right">البريد</th>
+                            <th class="px-4 py-3 text-xs font-bold text-gray-500 text-right">الهاتف</th>
+                            <th class="px-4 py-3 text-xs font-bold text-gray-500 text-right">العنوان</th>
+                            <th class="px-4 py-3 text-xs font-bold text-gray-500 text-right">الحالة</th>
+                            <th class="px-4 py-3 text-xs font-bold text-gray-500 text-right">تاريخ التسجيل</th>
+                            <th class="px-4 py-3 text-xs font-bold text-gray-500 text-right">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($organizations as $index => $org)
+                            <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                                <td class="px-4 py-3 text-sm text-gray-400">{{ $organizations->firstItem() + $loop->index }}</td>
+                                <td class="px-4 py-3 text-sm font-bold text-gray-800">{{ $org->name }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ $org->email }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ $org->phone ?? '-' }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ Str::limit($org->address ?? '-', 30) }}</td>
+                                <td class="px-4 py-3">@if($org->is_approved)<span class="badge bg-secondary-50 text-secondary-700">مفعلة</span>@else<span class="badge bg-amber-50 text-amber-700">معلقة</span>@endif</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ $org->created_at?->format('Y-m-d') }}</td>
+                                <td class="px-4 py-3">
+                                    <div class="flex gap-1.5">
+                                        <form action="{{ route('admin.organizations.toggle-approval', $org->id) }}" method="POST" class="inline">@csrf @method('PATCH')
+                                            <button type="submit" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-colors {{ $org->is_approved ? 'bg-amber-50 text-amber-600 hover:bg-amber-100' : 'bg-secondary-50 text-secondary-600 hover:bg-secondary-100' }}">
+                                                @if($org->is_approved) <i class="fas fa-ban ml-1"></i>إلغاء التفعيل @else <i class="fas fa-check ml-1"></i>تفعيل @endif
+                                            </button>
+                                        </form>
+                                        <form action="{{ route('admin.organizations.destroy', $org->id) }}" method="POST" class="inline">@csrf @method('DELETE')
+                                            <button type="submit" onclick="return confirm('حذف هذه المؤسسة؟')" class="w-8 h-8 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-colors text-xs" title="حذف"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-6">{{ $organizations->links('pagination::tailwind') }}</div>
+        @else
+            <div class="text-center py-16">
+                <div class="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4"><i class="fas fa-building-circle-exclamation text-3xl text-gray-300"></i></div>
+                <p class="font-bold text-gray-400">لا توجد مؤسسات مطابقة</p>
+            </div>
         @endif
-
-        <div class="card shadow-sm mb-3">
-            <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-md-4 mb-2">
-                        <div>إجمالي المؤسسات</div>
-                        <div class="fw-bold fs-5">{{ $stats['total'] ?? 0 }}</div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div>المؤسسات المفعلة</div>
-                        <div class="fw-bold fs-5 text-success">{{ $stats['approved'] ?? 0 }}</div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div>في انتظار الموافقة</div>
-                        <div class="fw-bold fs-5 text-warning">{{ $stats['pending'] ?? 0 }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card shadow-sm">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <div class="fw-bold">قائمة المؤسسات</div>
-                <div class="btn-group" role="group">
-                    <a href="{{ route('admin.organizations.index', ['status' => 'all']) }}" class="btn btn-sm btn-outline-secondary {{ ($status ?? 'all') === 'all' ? 'active' : '' }}">الكل</a>
-                    <a href="{{ route('admin.organizations.index', ['status' => 'approved']) }}" class="btn btn-sm btn-outline-success {{ ($status ?? '') === 'approved' ? 'active' : '' }}">مفعلة</a>
-                    <a href="{{ route('admin.organizations.index', ['status' => 'pending']) }}" class="btn btn-sm btn-outline-warning {{ ($status ?? '') === 'pending' ? 'active' : '' }}">معلقة</a>
-                </div>
-            </div>
-            <div class="card-body">
-                @if($organizations->count() > 0)
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>#</th>
-                                    <th>اسم المؤسسة</th>
-                                    <th>البريد الإلكتروني</th>
-                                    <th>رقم الهاتف</th>
-                                    <th>العنوان</th>
-                                    <th>الحالة</th>
-                                    <th>تاريخ التسجيل</th>
-                                    <th style="width:220px">الإجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($organizations as $index => $org)
-                                    <tr>
-                                        <td class="text-muted">{{ $index + 1 }}</td>
-                                        <td>{{ $org->name }}</td>
-                                        <td>{{ $org->email }}</td>
-                                        <td>{{ $org->phone ?? '-' }}</td>
-                                        <td>{{ $org->address ?? '-' }}</td>
-                                        <td>
-                                            @if($org->is_approved)
-                                                <span class="badge bg-success">مفعلة</span>
-                                            @else
-                                                <span class="badge bg-warning text-dark">معلقة</span>
-                                            @endif
-                                        </td>
-                                        <td>{{ optional($org->created_at)->format('Y-m-d') }}</td>
-                                        <td>
-                                            <div class="d-flex gap-2">
-                                                <form action="{{ route('admin.organizations.toggle-approval', $org->id) }}" method="POST" class="m-0">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <button type="submit" class="btn btn-sm {{ $org->is_approved ? 'btn-outline-warning' : 'btn-outline-success' }}">
-                                                        @if($org->is_approved)
-                                                            <i class="fas fa-ban"></i> إلغاء التفعيل
-                                                        @else
-                                                            <i class="fas fa-check"></i> تفعيل
-                                                        @endif
-                                                    </button>
-                                                </form>
-
-                                                <form action="{{ route('admin.organizations.destroy', $org->id) }}" method="POST" class="m-0">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من حذف هذه المؤسسة؟')">
-                                                        <i class="fas fa-trash"></i> حذف
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @else
-                    <div class="alert alert-info mb-0">لا توجد مؤسسات مطابقة للفلتر الحالي.</div>
-                @endif
-            </div>
-        </div>
     </div>
 </div>
 @endsection
