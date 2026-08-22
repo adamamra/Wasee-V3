@@ -1,59 +1,195 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# تحديثات تصميم النظام - وصيّ
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## نظرة عامة
 
-## About Laravel
+تم إجراء تحديث شامل وجذري على واجهات النظام لتكون أكثر احترافية وسهولة في الاستخدام، مع إضافة ألوان حديثة وجميلة.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## الألوان الجديدة
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### الألوان الأساسية (Primary)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **الأزرق السماوي المحترف**: `#0284c7` و `#0369a1`
+- التدرج: من أزرق فاتح إلى أزرق داكن محترف
 
-## Learning Laravel
+### الألوان الثانوية (Secondary)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- **الأخضر الزمردي**: `#16a34a` و `#15803d`
+- للنجاح والعمليات الإيجابية
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### الألوان الاهتمام (Accent)
 
-## Laravel Sponsors
+- **الأصفر الذهبي**: `#f59e0b` و `#d97706`
+- للتنبيهات والعناصر البارزة
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### الألوان المحايدة (Neutral)
 
-### Premium Partners
+- **الرمادي المعاصر**: مجموعة كاملة من الرمادي الفاتح إلى الداكن
+- للخلفيات والنصوص والحدود
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## الملفات المحدثة
 
-## Contributing
+### 1. **resources/views/layouts/app.blade.php**
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- تصميم جديد للشريط العلوي (Navigation)
+- نافذة منسدلة محترفة (Dropdown) لقائمة المستخدم
+- تذييل الصفحة (Footer) محسّن مع معلومات الاتصال
+- نظام تنبيهات محترف (Alerts) ملون
+- أزرار عصرية مع تأثيرات الظل والحركة
 
-## Code of Conduct
+### 2. **resources/views/welcome.blade.php**
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- صفحة ترحيب جديدة بالكامل
+- قسم بطولي (Hero Section) مع تأثيرات بصرية عائمة
+- عرض المميزات في بطاقات تفاعلية جميلة
+- قسم "من نحن" مع إحصائيات بصرية
+- دعوة للعمل (Call to Action) واضحة
 
-## Security Vulnerabilities
+### 3. **resources/views/home.blade.php**
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- صفحة الرئيسية للمستخدمين المسجلين
+- عرض احصائيات الطلبات (إجمالي والنشطة)
+- بطاقات المميزات الثلاث الجميلة
+- دعوة واضحة للتسجيل للمستخدمين الجدد
 
-## License
+### 4. **resources/views/auth/login.blade.php**
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- تصميم جديد وسهل الاستخدام
+- زر لإظهار/إخفاء كلمة المرور
+- رابط سهل للتسجيل للحسابات الجديدة
+- تصميم متركز وواضح
+
+### 5. **resources/views/auth/register.blade.php**
+
+- نموذج التسجيل المحسّن
+- حقول منسقة مع أيقونات
+- أزرار لعرض/إخفاء كلمة المرور
+- خيار الموافقة على الشروط والأحكام
+- رابط سهل لمن لديهم حساب بالفعل
+
+### 6. **resources/views/parcels/create.blade.php**
+
+- نموذج إنشاء طلب وصاية احترافي
+- حقول منسقة مع أيقونات ملونة
+- تصميم سلس وسهل الملء
+- أزرار إجراء واضحة (حفظ/إلغاء)
+
+### 7. **resources/views/parcels/my.blade.php**
+
+- عرض الطلبات في بطاقات جميلة بدلاً من الجداول
+- تنبيهات ملونة للطلبات القريبة من الانتهاء
+- تصميم متجاوب يعمل على جميع الأجهزة
+- معلومات واضحة عن كل طلب
+
+### 8. **resources/views/parcels/show.blade.php**
+
+- تصميم تفصيلي احترافي للطلب
+- خط زمني (Timeline) بصري للحالة
+- معلومات منظمة في أقسام واضحة
+- سجل الطلب مع تسلسل زمني جميل
+
+### 9. **resources/css/app.css**
+
+- تحديث كامل لألوان النظام
+- ألوان CSS متغيرات (CSS Variables) محدثة
+- نمط الأزرار الحديث
+- تأثيرات الحركة والظل المحترفة
+
+## المميزات الجديدة
+
+### تصميم حديث ومحترف
+
+- ألوان متناسقة وسهلة على العين
+- تصميم نظيف وبسيط لكن احترافي
+- مساحات بيضاء كافية بين العناصر
+
+### تجربة مستخدم محسّنة
+
+- حركات سلسة وناعمة عند التفاعل
+- تأثيرات الظل التي تعطي عمق للصفحة
+- انتقالات لونية جميلة عند الهوفر
+
+### توافق كامل
+
+- متجاوب تماماً مع جميع الأجهزة (موبايل، تابلت، ديسكتوب)
+- دعم كامل للعربية واتجاه RTL
+- مشغل فقط مع مستعرضات حديثة
+
+### إمكانية الوصول
+
+- ألوان قابلة للقراءة بسهولة
+- حدود واضحة بين العناصر
+- نص ملموس في أماكن التفاعل
+
+## دليل الاستخدام
+
+### الألوان الأساسية للاستخدام
+
+```css
+/* الأزرق الأساسي */
+color: #0284c7;
+
+/* الأخضر للنجاح */
+color: #16a34a;
+
+/* الأصفر للتنبيهات */
+color: #f59e0b;
+
+/* الرمادي للنصوص العادية */
+color: #6b7280;
+```
+
+### الأزرار الجديدة
+
+```html
+<!-- زر أساسي -->
+<a href="#" class="btn btn-modern">نص الزر</a>
+
+<!-- زر ثانوي -->
+<a href="#" class="btn btn-secondary-modern">نص الزر</a>
+```
+
+### البطاقات الجديدة
+
+```html
+<div class="card-modern">
+    <div class="card-body">المحتوى</div>
+</div>
+```
+
+## ملاحظات الصيانة
+
+### عند إضافة صفحات جديدة
+
+1. استخدم فئات `.card-modern` للبطاقات
+2. استخدم `.btn-modern` للأزرار الأساسية
+3. طبق نفس نمط التخطيط في `app.blade.php`
+4. تأكد من استخدام الألوان المعرفة
+
+### عند التحديث في المستقبل
+
+- احذر من الكتابة المباشرة للألوان، استخدم المتغيرات بدلاً منها
+- حافظ على التسلسل البصري والتدرجات اللونية
+- اختبر على أجهزة مختلفة
+
+## نصائح التصميم
+
+### للعناصر الإيجابية
+
+استخدم: الأخضر (`#16a34a`)
+
+### للعناصر المحايدة
+
+استخدم: الأزرق (`#0284c7`)
+
+### للعناصر التحذيرية
+
+استخدم: الأصفر (`#f59e0b`)
+
+### للعناصر الخطرة
+
+استخدم: الأحمر (من Bootstrap)
+
+---
+
+**آخر تحديث**: 17 يناير 2026
+**الإصدار**: 1.0
